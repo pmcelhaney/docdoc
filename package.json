@@ -1,0 +1,15 @@
+{
+  "name": "docdoc",
+  "version": "1.0.0",
+  "description": "Gives your documentation a check-up",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Patrick McElhaney",
+  "license": "ISC",
+  "dependencies": {
+    "shelljs": "^0.7.5",
+    "yargs": "^6.4.0"
+  }
+}
