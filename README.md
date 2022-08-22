@@ -4,6 +4,8 @@ Gives your documentation a checkup.
 
 ## Usage
 
+I created this tool to help me to remember to keep README files up to date. If code has changed significantly since its corresponding README file was last updated, the README is probably overdue for a check up. 
+
 ```sh
 $ npm run docdoc [directory_name]
 
