@@ -1,5 +1,5 @@
 {
-  "name": "docdoc",
+  "name": "docdr",
   "version": "1.0.0",
   "description": "Gives your documentation a check-up",
   "main": "index.js",
@@ -13,8 +13,8 @@
     "yargs": "^6.4.0"
   },
   "bin": {
-   "docdoc": "./index.js"
- },
+    "docdr": "./index.js"
+  },
   "engines": {
     "node": "> 7"
   }
