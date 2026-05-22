@@ -60,43 +60,59 @@ function percentFormat(n) {
   return `      ${Math.round(n * 10000) / 100}%`.slice(-7);
 }
 
+function main() {
+  const rootPath = argv._[0] || process.cwd();
+  const skipMissing = argv.skipMissing;
+  const threshhold = parseFloat(argv.threshhold, 10) || 0;
+  const directories = getDirectoriesRecursive(rootPath);
 
-const rootPath = argv._[0] || process.cwd();
-const skipMissing = argv.skipMissing;
-const threshhold = parseFloat(argv.threshhold, 10) || 0;
-const directories = getDirectoriesRecursive(rootPath);
+  let missingCount = 0;
+  let outdatedCount = 0;
 
-let missingCount = 0;
-let outdatedCount = 0;
+  process.stdout.write('Checking on the health of README.md files... ')
 
-process.stdout.write('Checking on the health of README.md files... ')
+  directories.forEach(directory => {
+    const result = checkDirectory(directory);
 
-directories.forEach(directory => {
-  const result = checkDirectory(directory);
+    const directoryName = `.${directory.slice(rootPath.length)}`;
 
-  const directoryName = `.${directory.slice(rootPath.length)}`;
+    if (result.missing && !skipMissing) {
+      missingCount++;
+      process.stdout.write(`\n      ! ${directoryName}`);
+      return;
+    }
 
-  if (result.missing && !skipMissing) {
-    missingCount++;
-    process.stdout.write(`\n      ! ${directoryName}`);
-    return;
+    if (result.score > threshhold / 100) {
+      outdatedCount++;
+      process.stdout.write(`\n${percentFormat(result.score)} ${directoryName}`);
+    }
+
+  });
+
+  if (missingCount + outdatedCount > 0) {
+    process.exitCode = 1;
+    const messageParts = [];
+    if (missingCount > 0) {
+      messageParts.push(`${missingCount} missing`);
+    }
+    if (outdatedCount > 0) {
+      messageParts.push(`${outdatedCount} outdated`);
+    }
+    process.stdout.write(`\nfound ${messageParts.join(' and ')} README${missingCount + outdatedCount === 1 ? '' : 's'}`);
   }
-
-  if (result.score > threshhold / 100) {
-    outdatedCount++;
-    process.stdout.write(`\n${percentFormat(result.score)} ${directoryName}`);
-  }
-
-});
-
-if (missingCount + outdatedCount > 0) {
-  process.exitCode = 1;
-  const messageParts = [];
-  if (missingCount > 0) {
-    messageParts.push(`${missingCount} missing`);
-  }
-  if (outdatedCount > 0) {
-    messageParts.push(`${outdatedCount} outdated`);
-  }
-  process.stdout.write(`\nfound ${messageParts.join(' and ')} README${missingCount + outdatedCount === 1 ? '' : 's'}`);
 }
+
+if (require.main === module) {
+  main();
+}
+
+module.exports = {
+  exec,
+  flatten,
+  getDirectories,
+  getDirectoriesRecursive,
+  countInsertionsAndDeletionsSinceHash,
+  checkDirectory,
+  percentFormat,
+  main
+};
