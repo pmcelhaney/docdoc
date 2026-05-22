@@ -9,7 +9,6 @@
   "author": "Patrick McElhaney",
   "license": "ISC",
   "dependencies": {
-    "shelljs": "^0.7.5",
     "yargs": "^6.4.0"
   },
   "bin": {

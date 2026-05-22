@@ -1,9 +1,9 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const childProcess = require('child_process');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const shell = require('shelljs');
 
 const docdr = require('../index');
 
@@ -46,12 +46,12 @@ test('getDirectoriesRecursive includes root and nested directories', () => {
 });
 
 test('countInsertionsAndDeletionsSinceHash parses git shortstat output', () => {
-  const originalExec = shell.exec;
-  shell.exec = () => ({ stdout: '1 file changed, 5 insertions(+), 3 deletions(-)\n' });
+  const originalExecFileSync = childProcess.execFileSync;
+  childProcess.execFileSync = () => '1 file changed, 5 insertions(+), 3 deletions(-)\n';
 
   try {
     assert.equal(docdr.countInsertionsAndDeletionsSinceHash('hash', '.'), 8);
   } finally {
-    shell.exec = originalExec;
+    childProcess.execFileSync = originalExecFileSync;
   }
 });

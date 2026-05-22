@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 const argv = require('yargs').argv;
-const shell = require('shelljs');
+const childProcess = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-function exec(command) {
-  return shell.exec(command, {silent: true}).stdout.trim()
+function exec(command, args) {
+  return childProcess.execFileSync(command, args, {encoding: 'utf8'}).trim()
 }
 
 function flatten(lists) {
@@ -25,8 +25,8 @@ function getDirectoriesRecursive(srcpath) {
   return [srcpath, ...flatten(getDirectories(srcpath).map(getDirectoriesRecursive))];
 }
 
-function countInsertionsAndDeletionsSinceHash(hash, path) {
-  const stat = exec(`git diff ${hash} --shortstat ${path}`);
+function countInsertionsAndDeletionsSinceHash(hash, directoryPath) {
+  const stat = exec('git', ['diff', hash, '--shortstat', directoryPath]);
   if (!stat) {
     return 0;
   }
@@ -47,7 +47,7 @@ function checkDirectory(directory) {
 
   const INITIAL_HASH = '4b825dc642cb6eb9a060e54bf8d69288fbee4904';
 
-  const hash = exec(`git log -n1 --pretty=%H -- ${path.join(directory, 'README.md')}`);
+  const hash = exec('git', ['log', '-n1', '--pretty=%H', '--', path.join(directory, 'README.md')]);
 
   return {
     path: directory,
