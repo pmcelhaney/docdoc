@@ -1,5 +1,5 @@
 {
-  "name": "docdrift",
+  "name": "docdelta",
   "version": "1.0.0",
   "description": "Gives your documentation a check-up",
   "main": "index.js",
