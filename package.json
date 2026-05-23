@@ -4,7 +4,8 @@
   "description": "Gives your documentation a check-up",
   "main": "index.js",
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "lint": "eslint ."
   },
   "author": "Patrick McElhaney",
   "license": "ISC",
@@ -16,5 +17,10 @@
   },
   "engines": {
     "node": "> 7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.4.0",
+    "globals": "^17.6.0"
   }
 }
