@@ -25,6 +25,23 @@ function getDirectoriesRecursive(srcpath) {
   return [srcpath, ...flatten(getDirectories(srcpath).map(getDirectoriesRecursive))];
 }
 
+function getGitTrackedDirectories(rootPath) {
+  const output = exec('git', ['-C', rootPath, 'ls-files']);
+  if (!output) return [];
+
+  const dirs = new Set();
+  output.split('\n').forEach(filePath => {
+    const absPath = path.join(rootPath, filePath);
+    let dir = path.dirname(absPath);
+    while (dir === rootPath || dir.startsWith(rootPath + path.sep)) {
+      dirs.add(dir);
+      if (dir === rootPath) break;
+      dir = path.dirname(dir);
+    }
+  });
+  return [...dirs];
+}
+
 function countInsertionsAndDeletionsSinceHash(hash, directoryPath) {
   const stat = exec('git', ['diff', hash, '--shortstat', directoryPath]);
   if (!stat) {
@@ -64,7 +81,7 @@ function main() {
   const rootPath = argv._[0] || process.cwd();
   const skipMissing = argv.skipMissing;
   const threshhold = parseFloat(argv.threshhold, 10) || 0;
-  const directories = getDirectoriesRecursive(rootPath);
+  const directories = getGitTrackedDirectories(rootPath);
 
   let missingCount = 0;
   let outdatedCount = 0;
@@ -111,6 +128,7 @@ module.exports = {
   flatten,
   getDirectories,
   getDirectoriesRecursive,
+  getGitTrackedDirectories,
   countInsertionsAndDeletionsSinceHash,
   checkDirectory,
   percentFormat,

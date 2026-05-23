@@ -55,3 +55,34 @@ test('countInsertionsAndDeletionsSinceHash parses git shortstat output', () => {
     childProcess.execFileSync = originalExecFileSync;
   }
 });
+
+test('getGitTrackedDirectories returns directories containing tracked files', () => {
+  const originalExecFileSync = childProcess.execFileSync;
+  const rootPath = '/some/root';
+
+  childProcess.execFileSync = () => 'file.js\nsrc/helper.js\nsrc/utils/tool.js';
+
+  try {
+    const dirs = docdr.getGitTrackedDirectories(rootPath).sort();
+    assert.deepEqual(dirs, [
+      rootPath,
+      path.join(rootPath, 'src'),
+      path.join(rootPath, 'src', 'utils')
+    ].sort());
+  } finally {
+    childProcess.execFileSync = originalExecFileSync;
+  }
+});
+
+test('getGitTrackedDirectories returns empty array when no tracked files', () => {
+  const originalExecFileSync = childProcess.execFileSync;
+
+  childProcess.execFileSync = () => '';
+
+  try {
+    const dirs = docdr.getGitTrackedDirectories('/some/root');
+    assert.deepEqual(dirs, []);
+  } finally {
+    childProcess.execFileSync = originalExecFileSync;
+  }
+});
