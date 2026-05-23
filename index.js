@@ -31,7 +31,7 @@ function countInsertionsAndDeletionsSinceHash(hash, directoryPath) {
     return 0;
   }
   const statNumbers = stat.match(/\d+/g).map(s => parseInt(s, 10));
-  const [filesChanged, insertions, deletions] = statNumbers;
+  const [, insertions, deletions] = statNumbers;
   return (insertions || 0) + (deletions || 0);
 }
 
